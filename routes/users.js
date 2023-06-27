@@ -1,6 +1,6 @@
 // const express from "express";
 const express = require("express")
-const { deleteUser, dislike, getUser, getAllUsers, like, subscribe, unsubscribe, update, updateActive, updateRole } = require("../controllers/user.js");
+const { addHistory, getHistory, deleteUser, dislike, getUser, getAllUsers, like, subscribe, unsubscribe, update, updateActive, updateRole } = require("../controllers/user.js");
 const { verifyToken, verifyAdmin } = require("../verifyToken.js");
 
 const router = express.Router()
@@ -32,5 +32,9 @@ router.put("/like/:videoId", like)
 
 // router.put("/dislike/:videoId",verifyToken, dislike)
 router.put("/dislike/:videoId", dislike)
+
+router.patch("/history",verifyToken, addHistory)
+
+router.get("/history",verifyToken, getHistory)
 
 module.exports = router

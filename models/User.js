@@ -13,6 +13,9 @@ const UserSchema = new mongoose.Schema({
     subscribedUsers: {
         type: [String],
     },
+    history: {
+        type:[mongoose.ObjectId],
+    },
     fromGoogle: {
         type: Boolean,
         default: false,

@@ -22,24 +22,24 @@ const update = async (req, res, next) => {
 
 // localhost:8800/api/users/changeRole/646f2db95d2b044aac8099a0
 const updateRole = async (req, res, next) => {
-    if(!req.body.role){
-        return res.status(400).json({msg:"Need to send role in body"});
-      }
-      try{
+    if (!req.body.role) {
+        return res.status(400).json({ msg: "Need to send role in body" });
+    }
+    try {
         let userID = req.params.id
         if (userID == "6497f02ac52d21a37cdb3443") {
             return res.status(401).json({ msg: "You cant change superadmin to user" });
         }
         let data = await UserModel.updateOne({ _id: userID }, { role: req.body.role })
         res.json(data);
-      }
-
-    
-    catch(err){
-      console.log(err)
-      res.status(500).json({msg:"err",err})
     }
-  }
+
+
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ msg: "err", err })
+    }
+}
 
 // localhost:8800/api/users/changeActive/646f2db95d2b044aac8099a0
 const updateActive = async (req, res, next) => {
@@ -158,4 +158,34 @@ const dislike = async (req, res, next) => {
     }
 }
 
-module.exports = { update, updateActive,updateRole, deleteUser, getUser, getAllUsers, subscribe, unsubscribe, like, dislike };
+// http://localhost:8800/api/users/history
+const addHistory = async (req, res, next) => {
+    let videoId = req.body.history
+    let video = await VideoModel.findOne({ _id: videoId })
+    if (!req.body.history) {
+        return res.status(400).json({ msg: "Need to send video id in body" });
+    }
+    try {
+        let data = await UserModel.findByIdAndUpdate(req.tokenData._id, {
+            $push: { 'history': video._id }
+        })
+        res.json(data);
+    }
+    catch (err) {
+        console.log(err)
+        return next(createError(500, err))
+    }
+}
+
+// http://localhost:8800/api/users/history
+const getHistory = async (req, res, next) => {
+    try {
+        let data = await UserModel.findOne({ _id: req.tokenData._id }).populate({ path: 'history', model: 'videos' });
+        res.json(data.history)
+    }
+    catch (err) {
+        console.log(err)
+        next(err)
+    }
+}
+module.exports = { addHistory, getHistory, update, updateActive, updateRole, deleteUser, getUser, getAllUsers, subscribe, unsubscribe, like, dislike };
