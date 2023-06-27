@@ -55,7 +55,6 @@ const deleteVideoByVideoUrl = async (req, res, next) => {
         }
         if (req.tokenData.role != "safeTubeAdmin") {
             return next(createError(404, "You must be admin to be here ,try log in again"))
-
             // alert("You must be admin to be here ,try log in again");
         }
         else {

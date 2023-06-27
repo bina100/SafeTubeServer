@@ -6,7 +6,6 @@ const { UserModel, validUser, validLogin } = require("../models/User.js")
 const { config } = require("../config/secret")
 const { LocalStorage } = require('node-localstorage');
 
-
 // localhost:8800/api/auth/signup
 const signup = async (req, res, next) => {
     let validBody = validUser(req.body);
@@ -42,15 +41,8 @@ const signin = async (req, res, next) => {
             return next(createError(400, "Wrong credentials!"))
         }
        
-        // const { password, ...others } = user._doc
         let newToken = jwt.sign({ _id: user.id, role:user.role }, `${config.tokenSecret}`, { expiresIn: "60mins" })
-        // var LocalStorage = require('node-localstorage').LocalStorage;
-        // localStorage.setItem('token', newToken);
-
-        // req.header("x-api-key", newToken)
         res.status(200).json({user:user._doc, token:newToken})
-
-        // res.json({ token: newToken });
 
     } catch (err) {
         next(err)
@@ -73,9 +65,7 @@ const googleAuth = async (req, res, next) => {
             const savedUser = await newUser.save()
             let newToken = jwt.sign({ _id: savedUser.id }, `${config.tokenSecret}`, { expiresIn: "60mins" })
 
-            // localStorage.setItem("token", newToken)
             res.header("x-api-key", newToken).status(200).json(savedUser._doc)
-
         }
     } catch (err) {
         next(err)
